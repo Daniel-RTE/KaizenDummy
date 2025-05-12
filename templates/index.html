@@ -1,42 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Chat with GPT</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-        #chat-box { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; }
-        .user { color: blue; font-weight: bold; }
-        .assistant { color: green; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MindMerge Styled Chat</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0f0f1a;
+      display: flex;
+      height: 100vh;
+      color: #fff;
+    }
+
+    .sidebar {
+      width: 240px;
+      background-color: #18182d;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-content {
+        margin-left: 40px;
+    }
+
+    .sidebar h2 {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 16px;
+    }
+
+    .sidebar ul li a {
+      color: #ccc;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .sidebar ul li a:hover {
+      color: #fff;
+    }
+
+    .main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+    .main-card {
+  width: 100%;
+  max-width: none; /* remove width restriction */
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Re-skin top-nav to match card */
+.main-card .top-nav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  color: #222;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-radius: 20px 20px 0 0;
+}
+
+.top-nav-left {
+  flex: 1;
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.top-nav-center {
+  flex: 1;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.top-nav-right {
+  flex: 1;
+  text-align: right;
+  margin-bottom: 5px;
+}
+
+.top-nav {
+    margin-top: 5px;
+}
+
+.main-card .top-nav input[type="search"] {
+  background: #f1f1f1;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+
+/* Optional: Slightly adjust .chat-container inside card */
+.chat-container {
+  background: #f9f9f9;
+  color: #222;
+  border-radius: 0 0 20px 20px;
+  box-shadow: none;
+  padding: 20px;
+  height: auto;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: stretch; /* changed from center */
+  justify-content: center;
+  padding: 20px;
+  max-height: 100%;
+}
+
+    .chat-container {
+  background: #f9f9f9;
+  color: #222;
+  border-radius: 0 0 20px 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  box-shadow: none;
+}
+
+.chat-content {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.chat-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.history-panel {
+  flex: 1;
+  background-color: #f1f1f1;
+  border-left: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  max-width: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-panel h3 {
+  margin-top: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.history-panel ul {
+  list-style: none;
+  padding: 0;
+}
+
+.history-panel ul li {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #222;
+}
+
+
+#chat-box {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f1f1f1;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  padding: 12px;
+  max-height: 100%;
+}
+
+    .message {
+      margin-top: 6px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .user {
+      text-align: right;
+    }
+
+    .user .bubble {
+      background: #daf1ff;
+      color: #003554;
+      padding: 10px 14px;
+      border-radius: 18px 18px 0 18px;
+      display: inline-block;
+      max-width: 80%;
+    }
+
+    .assistant {
+      text-align: left;
+    }
+
+    .assistant .bubble {
+      background: #e2ffe2;
+      color: #1e3a1e;
+      padding: 10px 14px;
+      border-radius: 18px 18px 18px 0;
+      display: inline-block;
+      max-width: 80%;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #clear-history-btn {
+  margin-top: auto;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#clear-history-btn:hover {
+  background-color: #b02a37;
+}
+
+.typing-dots span {
+  animation: blink 1.4s infinite;
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #555;
+}
+
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% { opacity: 0.2; }
+  20% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+  </style>
 </head>
 <body>
-    <h2>Chat with GPT</h2>
-    <div id="chat-box"></div>
-    <input type="text" id="user-input" placeholder="Type your message here..." style="width: 80%;">
-    <button onclick="sendMessage()">Send</button>
+  <div class="sidebar">
+    <div class="sidebar-content">
+      <h2>Kaizen</h2>
+      <ul>
+        <li><a href="#">AI Chat Helper</a></li>
+        <li><a href="#">Templates</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Statistics</a></li>
+        <li><a href="#">Settings</a></li>
+      </ul>
+    </div>
+    <div><a href="#">Log out</a></div>
+  </div>
 
-    <script>
-        async function sendMessage() {
-            const input = document.getElementById('user-input');
-            const chatBox = document.getElementById('chat-box');
-            const message = input.value;
+  <div class="main">
+    <div class="content">
+      <div class="main-card">
+        <div class="top-nav">
+            <div class="top-nav-left">
+                <label for="project-switcher" style="font-weight: bold;">Project:</label>
+                <select id="project-switcher" style="margin-left: 8px; padding: 6px; font-size: 1rem;">
+                  <option value="edb" selected>EDB</option>
+                  <option value="sm9">SM9</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            <div class="top-nav-center">
+              <input type="search" placeholder="Search..." />
+            </div>
+            <div class="top-nav-right">
+              <a href="#">Settings</a>
+            </div>
+          </div>
+  
+        <div class="chat-content">
+            <div class="chat-section">
+              <div class="chat-header">
+              </div>
+              <div id="chat-box"></div>
+              <div class="input-area">
+                <input type="text" id="user-input" placeholder="Type your message here..." />
+                <button onclick="sendMessage()">Send</button>
+              </div>
+            </div>
+          
+            <div class="history-panel">
+              <h3>History</h3>
+              <ul id="history-list">
+                <li>Welcome message</li>
+                <li>Previous session</li>
+              </ul>
+              <button id="clear-history-btn" onclick="clearHistory()">Clear History</button>
+            </div>
+          </div>
+          
+  
 
-            if (!message.trim()) return;
-
-            chatBox.innerHTML += `<div class="user">You: ${message}</div>`;
-
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message })
-            });
-
-            const data = await response.json();
-            chatBox.innerHTML += `<div class="assistant">Assistant: ${data.reply}</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-            input.value = '';
-        }
-    </script>
+          <script>
+            async function sendMessage() {
+              const input = document.getElementById('user-input');
+              const chatBox = document.getElementById('chat-box');
+              const message = input.value;
+          
+              if (!message.trim()) return;
+          
+              // Append user's message
+              chatBox.innerHTML += `
+                <div class="message user">
+                  <div class="bubble">You: ${message}</div>
+                </div>
+              `;
+              chatBox.scrollTop = chatBox.scrollHeight;
+              input.value = '';
+          
+              // Add assistant message container
+              const assistantMessage = document.createElement('div');
+              assistantMessage.classList.add('message', 'assistant');
+              const bubble = document.createElement('div');
+              bubble.classList.add('bubble');
+              assistantMessage.appendChild(bubble);
+              chatBox.appendChild(assistantMessage);
+          
+              // Show "typing..." animation
+              bubble.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
+          
+              chatBox.scrollTop = chatBox.scrollHeight;
+          
+              try {
+                const response = await fetch('/chat', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ message })
+                });
+          
+                const data = await response.json();
+                const replyText = `Assistant: ${data.reply}`;
+          
+                // Remove typing dots and start typing animation
+                bubble.textContent = '';
+                typeText(bubble, replyText, 10);  // faster typing speed: 10ms per char
+          
+              } catch (error) {
+                bubble.textContent = "Assistant: (Error receiving response)";
+              }
+            }
+          
+            // Typing effect function
+            function typeText(element, text, speed = 10) {
+              let formattedText = formatText(text);
+              let index = 0;
+          
+              function typeChar() {
+                if (index < formattedText.length) {
+                  element.innerHTML += formattedText.charAt(index);
+                  index++;
+                  setTimeout(typeChar, speed);
+                }
+              }
+              typeChar();
+            }
+          
+            // Format the text with newlines, lists, etc.
+            function formatText(text) {
+              // Replace newline characters with <br> for line breaks
+              text = text.replace(/\n/g, '<br>');
+          
+              // Handle bullet points
+              text = text.replace(/^(\*|-) (.+)$/gm, '<ul><li>$2</li></ul>');
+          
+              // Handle numbered list
+              text = text.replace(/^\d+\.\s(.+)$/gm, (match, p1) => {
+                return `<ol><li>${p1}</li></ol>`;
+              });
+          
+              // Preserve multiple spaces (like for indentation)
+              text = text.replace(/ {2,}/g, '&nbsp;&nbsp;');
+          
+              // Return the formatted HTML
+              return text;
+            }
+          </script>
+          
+          
 </body>
 </html>

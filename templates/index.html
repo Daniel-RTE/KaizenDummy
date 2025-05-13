@@ -333,11 +333,11 @@
         <div class="top-nav">
             <div class="top-nav-left">
                 <label for="project-switcher" style="font-weight: bold;">Project:</label>
-                <select id="project-switcher" style="margin-left: 8px; padding: 6px; font-size: 1rem;">
-                  <option value="edb" selected>EDB</option>
-                  <option value="sm9">SM9</option>
-                  <option value="other">Other</option>
-                </select>
+                  <select id="project-switcher" name="project-switcher" style="margin-left: 8px; padding: 6px; font-size: 1rem;">
+                      <option value="okonomi" selected>EDB - Økonomi</option>
+                      <option value="lonn">EDB - Lønn</option>
+                      <option value="other">Andre indexer</option>
+                  </select>
               </div>
             <div class="top-nav-center">
               <input type="search" placeholder="Search..." />
@@ -378,7 +378,8 @@
         const chatBox = document.getElementById('chat-box');
         const searchingIndicator = document.getElementById('searching-indicator');
         const message = input.value;
-    
+        const index = document.getElementById('project-switcher').value;
+        //const index = project-switcher.value;
         if (!message.trim()) return;
     
         // Append user's message
@@ -400,7 +401,7 @@
         bubble.classList.add('bubble');
         assistantMessage.appendChild(bubble);
         chatBox.appendChild(assistantMessage);
-    
+        
         // Show "typing..." animation
         bubble.innerHTML = `<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span>`;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -409,7 +410,10 @@
           const response = await fetch('/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message })
+            body: JSON.stringify({ 
+              message: message,
+              index: index
+             })
           });
     
           // Hide searching indicator

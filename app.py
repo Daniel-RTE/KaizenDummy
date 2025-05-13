@@ -14,8 +14,9 @@ api_version = "2024-12-01-preview"
 
 # Azure Cognitive Search config
 search_service_name = "u4cs-llmpilot-search-basic-01" 
-search_index_name = "edbokonomi310325" 
+search_index_name_okonomi = "edbokonomi310325" 
 search_key = "RaXq8JiYbQwdHlI7tDfDMoNYaXwMF8ZrqKMyG3WnroAzSeCluKjh"  
+search_index_name_lonn = "edblonnindeks131124"
 
 client = AzureOpenAI(
     api_version=api_version,
@@ -23,12 +24,14 @@ client = AzureOpenAI(
     api_key=subscription_key,
 )
 
-# Create Azure Search client
 search_client = SearchClient(
     endpoint=f"https://{search_service_name}.search.windows.net",
-    index_name=search_index_name,
+    index_name=search_index_name_okonomi,
     credential=AzureKeyCredential(search_key)
 )
+
+# Create Azure Search client
+
 
 @app.route('/')
 def index():
@@ -37,8 +40,14 @@ def index():
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
-    
-    # First search for relevant documents
+    index_choice = request.json.get('index')
+    print(index_choice)
+    #data = request.json
+    #user_message = data.get('message')
+    #index_choice = data.get('index')
+    #print(index_choice)  # This should print the selected value
+
+        # Handle GET request
     search_results = search_azure_index(user_message)
     
     # Create the system message with context
